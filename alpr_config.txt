@@ -1,0 +1,11 @@
+[DEFAULT]
+model_file = ./Model/lp_recognition.h5
+label_file = ./Model/labels.txt
+#0:run on single image; 1:run on multiple images in a folder
+is_folder = 1
+#provide if is_folder=0
+image_path = ./license_plates/75.jpg
+#provide if is_folder=1
+folder_path = ./license_plates
+#provide if is_folder=1; write LP number against image name
+write_to_csv = 1
