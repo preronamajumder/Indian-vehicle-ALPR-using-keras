@@ -1,6 +1,7 @@
 import os
 import sys
 import cv2
+import csv
 from skimage import measure
 from skimage.measure import regionprops
 import numpy as np
@@ -20,7 +21,7 @@ def get_sorted_char_list(cropped_char):
     for x in char_keys:
         char_list.append(cropped_char[x])
         # cv2.imshow("lp", cropped_char[x])
-        cv2.imwrite("char"+str(c)+".jpg", cropped_char[x])
+        # cv2.imwrite("char"+str(c)+".jpg", cropped_char[x])
         c+=1
         # cv2.waitKey(0)
     return char_list
@@ -74,7 +75,7 @@ def get_characters(img):
 
 def load_lp_model(path):
     model = load_model(path)
-    model.summary()
+    # model.summary()
     return model
 
 def load_classes(label_path):
@@ -123,6 +124,12 @@ def check_config(data):
         if 'folder_path' not in data:
             print("Image path not provided")
             sys.exit()
+        if 'write_to_csv' not in data:
+            print("write_to_csv not provided")
+            sys.exit()
+        if 'delete_existing_csv' not in data:
+            print("delete_existing_csv not provided")
+            sys.exit()
     
 def read_config(config_file):
     config = configparser.ConfigParser()
@@ -147,14 +154,17 @@ def read_config(config_file):
             data['folder_path'] = config.get('DEFAULT', key)
         
         if key == "write_to_csv":
-            data['write_to_csv'] = config.get('DEFAULT', key)
+            data['write_to_csv'] = bool(config.getint('DEFAULT', key))
+
+        if key == "delete_existing_csv":
+            data['delete_existing_csv'] = bool(config.getint('DEFAULT', key))
 
     check_config(data)
     return data
     
 def main():
     data = read_config("alpr_config.txt")
-
+    print(data)
     #load model
     model = load_lp_model(data['model_path'])
     #load classes
@@ -170,8 +180,12 @@ def main():
         print('LP Number: ', number_plate)
 
     else:
+        if data["delete_existing_csv"]:
+            
+            if os.path.exists("license_plate.csv"):
+                os.remove("license_plate.csv")
         #read license plate images
-        for files in os.listdir(data['folder_path']):
+        for files in sorted(os.listdir(data['folder_path'])):
             print(files)
             if files.endswith(".jpg"):
                 img = cv2.imread(os.path.join(data['folder_path'],files))
@@ -181,7 +195,16 @@ def main():
                 number_plate = lp_recognition(char_list, model, classes)
 
                 print('LP Number: ', number_plate)
-        
+                if data['write_to_csv']:
+                    if not os.path.exists("license_plate.csv"):
+                        with open("license_plate.csv", "w") as f:
+                            writer = csv.writer(f)
+                            writer.writerow(["filename", "LP number"])
+                            writer.writerow([files, number_plate])
+                    else:
+                        with open("license_plate.csv", "a") as f:
+                            writer = csv.writer(f)
+                            writer.writerow([files, number_plate])
 
 if __name__ == "__main__":
     main()
