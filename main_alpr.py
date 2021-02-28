@@ -1,4 +1,5 @@
 import os
+from os import replace
 import sys
 import cv2
 import csv
@@ -88,6 +89,31 @@ def load_classes(label_path):
 def preprocessing(char_list):
     return [char/255 for char in char_list]
 
+def check_format(lp_number):
+    #letters but predicted numbers
+    replace_dict1 = {"0": "D", "2": "Z", "4": "A", "8": "B"}
+    #numbers but predicted letters
+    replace_dict2 = {"A": "4", "B": "8", "D": "0", "Q": "0", "X": "H"}
+    new_number = []
+    nums = [2, 3, 6, 7, 8, 9]
+    for i in range(len(lp_number)):
+        print(lp_number[i])
+
+        if i in nums:
+            #number positions
+            if lp_number[i] in replace_dict2.items():
+                new_number.append(replace_dict2[lp_number[i]])
+            else:
+                new_number.append(lp_number[i])
+        else:
+            #letter positions
+            if lp_number[i] in replace_dict1.items():
+                new_number.append(replace_dict1[lp_number[i]])
+            else:
+                new_number.append(lp_number[i])
+
+    return new_number
+
 def lp_recognition(char_list, model, classes):
 
     #preprocessing
@@ -101,6 +127,7 @@ def lp_recognition(char_list, model, classes):
 
     lp_number = [classes[x] for x in y_hat]
     #TODO: check LP format 
+    lp_number = check_format(lp_number)
     lp_number = ''.join(lp_number)
     
     return lp_number
@@ -181,7 +208,6 @@ def main():
 
     else:
         if data["delete_existing_csv"]:
-            
             if os.path.exists("license_plate.csv"):
                 os.remove("license_plate.csv")
         #read license plate images
