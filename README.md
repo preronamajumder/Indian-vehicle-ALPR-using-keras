@@ -13,3 +13,4 @@ Keras sequential model used to perform OCR. Input size of each character is 28x2
 
 <img width="231" alt="Screen Shot 2021-02-28 at 4 26 55 PM" src="https://user-images.githubusercontent.com/38746630/109416064-0c3fa700-79e2-11eb-9c45-2e7ffa2a70c0.png">
 
+For ease of use a config file is provided for model path, label path, image path, folder path. if is_folder = 0, then, OCR is performed on single image. If is_folder = 1, then, OCR is performed on a collection of images present in a folder. 
