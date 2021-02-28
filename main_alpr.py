@@ -16,9 +16,12 @@ def get_binary_image(img):
 def get_sorted_char_list(cropped_char):
     char_keys = sorted(cropped_char.keys())
     char_list = []
+    c = 0
     for x in char_keys:
         char_list.append(cropped_char[x])
         # cv2.imshow("lp", cropped_char[x])
+        cv2.imwrite("char"+str(c)+".jpg", cropped_char[x])
+        c+=1
         # cv2.waitKey(0)
     return char_list
 
