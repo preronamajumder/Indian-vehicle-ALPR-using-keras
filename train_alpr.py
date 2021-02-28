@@ -9,7 +9,6 @@ import os
 import cv2
 import numpy as np
 from keras.preprocessing.image import ImageDataGenerator
-from keras import backend as K
 
 
 def load_data(dir):
