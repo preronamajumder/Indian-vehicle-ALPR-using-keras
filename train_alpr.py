@@ -35,9 +35,7 @@ def load_data(dir):
     ls = [d[key] for key in labels]
     ln = np.sort(list(set(labels)))     # all classes
     l = (list(set(ls)))
-    class_mapping = {}
-    for i in range(len(ln)):
-        class_mapping[ln[i]] = l[i]
+    class_mapping = {ln[i]: l[i] for i in range(len(ln))}
 
     print(class_mapping)
     return image_array, labels, class_mapping
@@ -110,18 +108,17 @@ def load_lp_chars(dir):
     image_list = []
     count = 0
     for image in sorted(os.listdir(dir)):
-        if image != '.DS_Store':
-            if image.endswith('.jpg') or image.endswith('.png'):
-                # print('character file name: ', image)
-                img = cv2.imread(dir + '/' + image)/255
-                img = cv2.resize(img, (28, 28), interpolation=cv2.INTER_AREA)
-                image_list.append(img)
-                count += 1
-                print(count)
+        if image != '.DS_Store' and (
+            image.endswith('.jpg') or image.endswith('.png')
+        ):
+            # print('character file name: ', image)
+            img = cv2.imread(dir + '/' + image)/255
+            img = cv2.resize(img, (28, 28), interpolation=cv2.INTER_AREA)
+            image_list.append(img)
+            count += 1
+            print(count)
 
-    image_array = np.array(image_list)
-
-    return image_array
+    return np.array(image_list)
 
 def main():
     dir = './ocr_char'
