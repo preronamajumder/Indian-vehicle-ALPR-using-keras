@@ -30,14 +30,11 @@ def load_data(dir):
                     count += 1
                     print(count)
 
-    image_array = np.array(image_list)
     d = {key: value for value, key in enumerate(set(labels))}
     ls = [d[key] for key in labels]
     ln = np.sort(list(set(labels)))     # all classes
     l = (list(set(ls)))
-    class_mapping = {}
-    for i in range(len(ln)):
-        class_mapping[ln[i]] = l[i]
+    class_mapping = {ln[i]: l[i] for i in range(len(ln))}
 
     print(class_mapping)
     return image_array, labels, class_mapping
