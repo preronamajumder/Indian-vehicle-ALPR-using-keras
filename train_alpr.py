@@ -30,6 +30,7 @@ def load_data(dir):
                     count += 1
                     print(count)
 
+    image_array = np.array(image_list)
     d = {key: value for value, key in enumerate(set(labels))}
     ls = [d[key] for key in labels]
     ln = np.sort(list(set(labels)))     # all classes
